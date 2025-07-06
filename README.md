@@ -2,6 +2,8 @@
 
 A modern, responsive web application for batch processing images with resizing and compression capabilities. All processing is done locally in your browser - no files are uploaded to any server.
 
+![preview](preview.png)
+
 ## Features
 
 ### 🖼️ **Image Processing**
