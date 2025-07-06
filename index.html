@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Image Resizer & Compressor</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>
+        <img src="logo.png" alt="Logo" class="header-logo">
+        Batch Image Resizer & Compressor
+      </h1>
+      <p>Resize and compress multiple images at once</p>
+    </header>
+
+    <main>
+      <!-- Upload Section -->
+      <section class="upload-section">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-content">
+            <svg class="icon upload-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+            </svg>
+            <h3>Drop images here or click to browse</h3>
+            <p>Supports JPG, PNG, WebP, GIF</p>
+            <input type="file" id="fileInput" multiple accept="image/*" hidden>
+            <button class="browse-btn">
+              Browse Files
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section class="settings-section">
+        <h2>
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+          </svg>
+          Processing Settings
+        </h2>
+        
+        <div class="settings-grid">
+          <!-- Resize Settings -->
+          <div class="setting-group">
+            <h3>Resize Options</h3>
+            <div class="setting-item">
+              <label for="resizeMode">Resize Mode:</label>
+              <select id="resizeMode">
+                <option value="none">No Resize</option>
+                <option value="percentage">Percentage</option>
+                <option value="dimensions">Specific Dimensions</option>
+                <option value="maxWidth">Max Width</option>
+                <option value="maxHeight">Max Height</option>
+              </select>
+            </div>
+            
+            <div class="setting-item" id="percentageGroup" style="display: none;">
+              <label for="resizePercentage">Scale Percentage:</label>
+              <input type="number" id="resizePercentage" min="1" max="200" value="50">
+            </div>
+            
+            <div class="setting-item" id="dimensionsGroup" style="display: none;">
+              <label for="resizeWidth">Width (px):</label>
+              <input type="number" id="resizeWidth" min="1" value="800">
+              <label for="resizeHeight">Height (px):</label>
+              <input type="number" id="resizeHeight" min="1" value="600">
+            </div>
+            
+            <div class="setting-item" id="maxWidthGroup" style="display: none;">
+              <label for="maxWidth">Max Width (px):</label>
+              <input type="number" id="maxWidth" min="1" value="1920">
+            </div>
+            
+            <div class="setting-item" id="maxHeightGroup" style="display: none;">
+              <label for="maxHeight">Max Height (px):</label>
+              <input type="number" id="maxHeight" min="1" value="1080">
+            </div>
+          </div>
+
+          <!-- Compression Settings -->
+          <div class="setting-group">
+            <h3>Compression Options</h3>
+            <div class="setting-item">
+              <label for="quality">Quality:</label>
+              <input type="range" id="quality" min="1" max="100" value="80">
+              <span id="qualityValue">80%</span>
+            </div>
+            
+            <div class="setting-item">
+              <label for="format">Output Format:</label>
+              <select id="format">
+                <option value="jpeg">JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+              </select>
+            </div>
+            
+            <div class="setting-item">
+              <label for="maintainAspectRatio">
+                <input type="checkbox" id="maintainAspectRatio" checked>
+                Maintain Aspect Ratio
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- File List Section -->
+      <section class="files-section" id="filesSection" style="display: none;">
+        <div class="section-header">
+          <h2>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+            </svg>
+            Selected Files
+          </h2>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="processBtn">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              Process Images
+            </button>
+            <button class="btn btn-secondary" id="clearBtn">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+              </svg>
+              Clear All
+            </button>
+          </div>
+        </div>
+        <div class="files-list" id="filesList"></div>
+      </section>
+
+      <!-- Progress Section -->
+      <section class="progress-section" id="progressSection" style="display: none;">
+        <h2>
+          <svg class="icon spinner" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/>
+          </svg>
+          Processing Images
+        </h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p id="progressText">Processing image 1 of 5...</p>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection" style="display: none;">
+        <div class="section-header">
+          <h2>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Processing Complete
+          </h2>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="reprocessBtn">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+              </svg>
+              Reprocess
+            </button>
+            <button class="btn btn-primary" id="downloadAllBtn">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2 6h-2v2h2v-2zm0 4h-2v2h2v-2zm-4-4h-2v2h2v-2zm0 4h-2v2h2v-2zm-4-4H8v2h2v-2zm0 4H8v2h2v-2z"/>
+              </svg>
+              Download ZIP
+            </button>
+            <button class="btn btn-secondary" id="newBatchBtn">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+              New Batch
+            </button>
+          </div>
+        </div>
+        <div class="results-summary" id="resultsSummary"></div>
+        <div class="results-list" id="resultsList"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Batch Image Resizer & Compressor by <a href="https://irfanykywz.github.io/" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none;">irfanykywz</a></p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html> 
